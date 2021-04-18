@@ -1,0 +1,5 @@
+inherit_gem:
+  prettier: rubocop.yml
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
