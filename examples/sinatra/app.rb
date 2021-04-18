@@ -1,13 +1,18 @@
 begin
   require "sinatra"
+  require "securerandom"
   require "omniauth"
   require "omniauth-open-edx"
 rescue LoadError
   require "rubygems"
+  require "securerandom"
   require "sinatra"
   require "omniauth"
   require "omniauth-open-edx"
 end
+
+set sessions: true
+set :session_secret, ENV.fetch("SESSION_SECRET") { SecureRandom.hex(64) }
 
 use Rack::Session::Cookie
 use OmniAuth::Builder do
@@ -24,7 +29,10 @@ end
 
 get "/" do
   <<-HTML
-  <a href='/auth/open_edx'>Sign in with Open edX</a>
+  <form method='post' action='/auth/open_edx'>
+    <input type="hidden" name="authenticity_token" value='#{request.env["rack.session"]["csrf"]}'>
+    <button type='submit'>Sign in with Open edX</button>
+  </form>
   HTML
 end
 
